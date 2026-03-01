@@ -11,7 +11,7 @@ class University extends Model
         'name',
         'city',
         'state',
-        'email_domain',
+        'cnpj',
     ];
 
     public function casts(): array {

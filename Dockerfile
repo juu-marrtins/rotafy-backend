@@ -10,6 +10,7 @@ WORKDIR /var/www/html
 
 COPY . .
 RUN git config --global --add safe.directory /var/www/html
-RUN composer install
+RUN composer install -vvv || true
+RUN php artisan package:discover
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
