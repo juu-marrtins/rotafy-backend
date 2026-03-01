@@ -15,10 +15,12 @@ return new class extends Migration
             $table->foreignId('university_id')
                 ->constrained();
             $table->string('phone', 11);
-            $table->string(' photo_url');
+            $table->string('photo_url')
+                ->nullable();
             $table->enum('user_title', ['student', 'teacher', 'employee']);
             $table->enum('user_type', ['driver', 'passenger', 'both']);
-            $table->enum('status', ['pending', 'verified', 'rejected']);
+            $table->enum('status', ['pending', 'verified', 'rejected'])
+                ->default('pending');
         });
     }
 

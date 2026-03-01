@@ -3,8 +3,6 @@ services:
     build:
       dockerfile: Dockerfile
     container_name: laravel_app
-    env_file:
-      - .env
     ports:
       - "8000:8000"
     volumes:
