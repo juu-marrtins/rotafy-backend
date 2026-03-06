@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('vehicles', function (Blueprint $table) {
-            $table->foreignId('driver_profiles_id')
-                ->constrained('driver_profiles');
+            $table->foreignId('driver_id')
+                ->constrained('users');
         });
     }
 
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('vehicles', function (Blueprint $table) {
-            $table->dropForeign('vehicles_driver_profiles_id_foreign');
+            $table->dropForeign('vehicles_driver_id_foreign');
         });
     }
 };

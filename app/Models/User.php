@@ -51,8 +51,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(University::class);
     }
 
-    public function driverProfile(): HasOne {
-        return $this->hasOne(DriverProfile::class);
+    public function driverDocuments(): HasOne {
+        return $this->hasOne(DriverDocuments::class);
     }
 
     public function rideRequests(): HasMany {
@@ -75,8 +75,17 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Payment::class, 'receiver_id');
     }
 
+    public function vehicle(): HasOne {
+        return $this->hasOne(Vehicles::class, 'driver_id');
+    }
+
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerifyEmailCustom);
+    }
+
+    public function hasVerifiedEmail(): bool
+    {
+        return $this->email_verified_at !== null;
     }
 }
