@@ -1,59 +1,353 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 🚗 Rotafy — Backend API
 
-## About Laravel
+**Plataforma de caronas universitárias intermunicipais**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+[![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?style=flat-square&logo=php&logoColor=white)](https://php.net)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql&logoColor=white)](https://postgresql.org)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=flat-square&logo=docker&logoColor=white)](https://docker.com)
+[![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow?style=flat-square)]()
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+> Projeto de TCC — API REST para conectar estudantes universitários que precisam de carona com motoristas que já fazem o mesmo trajeto, promovendo mobilidade solidária e redução de custos.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+[Sobre](#-sobre) · [Funcionalidades](#-funcionalidades) · [Arquitetura](#-arquitetura) · [Instalação](#-instalação) · [API](#-endpoints) · [Precificação](#-modelo-de-precificação)
 
-## Learning Laravel
+</div>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📖 Sobre
 
-## Laravel Sponsors
+O **Rotafy** nasceu de uma necessidade real: estudantes de cidades menores que precisam se deslocar diariamente até o polo universitário enfrentam altos custos de transporte. A plataforma conecta passageiros e motoristas que já fazem o mesmo trajeto, permitindo o rateio proporcional do custo de combustível — caracterizando **ajuda de custo**, não transporte remunerado.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+**Contexto:** Cidades satélite → polo universitário (ex: 53 km de distância). Carona informal custa R$20. Com Rotafy, o passageiro paga entre R$8 e R$13, dependendo do número de pessoas no carro.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## ✅ Funcionalidades
 
-## Contributing
+### Implementadas
+- [x] Autenticação via **Laravel Sanctum** (registro, login, logout, tokens)
+- [x] Cadastro de perfil de motorista com documentos (CNH, CRLV, fotos)
+- [x] Integração com **AbacatePay** para pagamentos via PIX
+- [x] Criação de customer no AbacatePay ao aprovar motorista
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Em desenvolvimento
+- [ ] Listagem e busca de caronas disponíveis
+- [ ] Sistema de solicitação e aceite de carona
+- [ ] Cálculo automático de preço (INMETRO + ANP)
+- [ ] Avaliações bidirecionais (passageiro ↔ motorista)
+- [ ] Painel administrativo para aprovação de documentos
+- [ ] Sistema de saque para motoristas
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 🏗️ Arquitetura
 
-## Security Vulnerabilities
+```
+rotafy-backend/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/        # Controllers da API
+│   │   ├── Requests/           # Form Requests (validação)
+│   │   └── Resources/          # API Resources (transformação)
+│   ├── Models/                 # Eloquent Models
+│   │   ├── User.php
+│   │   ├── DriverProfile.php
+│   │   ├── Vehicle.php
+│   │   ├── DriverDocument.php
+│   │   ├── University.php
+│   │   ├── Ride.php
+│   │   ├── RideRequest.php
+│   │   ├── Payment.php
+│   │   └── Rating.php
+│   ├── Observers/              # Model Observers (ex: AbacatePay ao aprovar)
+│   ├── Services/               # Lógica de negócio
+│   │   ├── PricingService.php  # Cálculo de precificação
+│   │   └── AbacatePayService.php
+│   └── Jobs/                   # Jobs assíncronos
+│       └── CreateAbacatePayCustomer.php
+├── database/
+│   ├── migrations/
+│   └── seeders/
+├── routes/
+│   └── api.php
+└── docker-compose.yml
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Stack tecnológica
 
-## License
+| Camada | Tecnologia |
+|---|---|
+| Framework | Laravel 11.x |
+| Linguagem | PHP 8.2+ |
+| Banco de dados | PostgreSQL 16 |
+| Autenticação | Laravel Sanctum |
+| Pagamentos | AbacatePay (PIX) |
+| Containerização | Docker + Docker Compose |
+| Hospedagem (prod) | Google Cloud Run + Cloud SQL |
+| Storage (docs) | Google Cloud Storage |
+| Distância | Google Maps Distance Matrix API |
+| Consumo veicular | Tabela INMETRO |
+| Preço combustível | API ANP |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 🗄️ Modelo de Banco de Dados
+
+```
+universities ──< users ──────────< ride_requests >── rides
+                  │                     │                │
+                  └── driver_profiles ──┘         driver_profiles
+                            │                           │
+                        vehicles                  driver_documents
+                            
+ride_requests ──── payments (1:1)
+ride_requests ──< ratings
+```
+
+### Tabelas principais
+
+| Tabela | Descrição |
+|---|---|
+| `users` | Usuários (estudantes, professores, funcionários) |
+| `universities` | Universidades cadastradas na plataforma |
+| `driver_profiles` | Perfil de motorista (separado de users) |
+| `vehicles` | Veículo do motorista (placa, modelo, consumo INMETRO) |
+| `driver_documents` | CNH, CRLV, selfie — com status de aprovação |
+| `rides` | Caronas ofertadas pelos motoristas |
+| `ride_requests` | Solicitações de passageiros com preço congelado |
+| `payments` | Transações financeiras via AbacatePay |
+| `ratings` | Avaliações bidirecionais pós-carona |
+
+---
+
+## 💰 Modelo de Precificação
+
+O Rotafy usa um modelo de **rateio parcial de custo** — o passageiro paga apenas uma fração proporcional do trajeto, não o valor integral.
+
+### Fórmula
+
+```
+Consumo_real     = Consumo_INMETRO × 0,85  (fator de correção para uso real)
+Custo_total      = (Distância ÷ Consumo_real) × Preço_combustível
+Custo_rateado    = Custo_total × P          (P varia com nº de passageiros)
+Valor_base       = Custo_rateado ÷ N_passageiros
+Valor_final      = Valor_base × 1,12        (12% taxa da plataforma)
+```
+
+### Percentual de rateio (P)
+
+| Passageiros | Rateio | Justificativa |
+|---|---|---|
+| 1 | 50% | Motorista ainda arca com metade |
+| 2 | 60% | Divisão mais equilibrada |
+| 3+ | 70% | Máximo permitido — evita lucro |
+
+> **Por que no máximo 70%?** Acima disso o motorista obtém lucro líquido, o que descaracteriza a ajuda de custo e pode enquadrar a atividade como transporte remunerado (irregular).
+
+### Fontes de dados automáticas
+
+| Dado | Fonte |
+|---|---|
+| Distância entre municípios | Google Maps Distance Matrix API |
+| Consumo do veículo | Tabela INMETRO (por modelo/ano) |
+| Preço do combustível | ANP — atualizado semanalmente por município |
+
+### Divisão financeira (exemplo: 53km, 2 passageiros)
+
+```
+Passageiro paga:     R$ 11,21  (valor final com 12% de taxa)
+Motorista recebe:    R$ 10,01  (valor base × 2 passageiros ÷ 2)
+Custo provedor:      R$  0,80  (AbacatePay — fixo por transação PIX)
+Plataforma líquida:  R$  1,20  (12% - custo provedor)
+```
+
+---
+
+## 🚀 Instalação
+
+### Pré-requisitos
+
+- Docker e Docker Compose instalados
+- Git
+
+### Passo a passo
+
+```bash
+# 1. Clone o repositório
+git clone https://github.com/juu-marrtins/rotafy-backend.git
+cd rotafy-backend
+
+# 2. Copie o arquivo de ambiente
+cp .env.example .env
+
+# 3. Suba os containers
+docker compose up -d
+
+# 4. Instale as dependências
+docker compose exec app composer install
+
+# 5. Gere a chave da aplicação
+docker compose exec app php artisan key:generate
+
+# 6. Execute as migrations
+docker compose exec app php artisan migrate
+
+# 7. (Opcional) Rode os seeders
+docker compose exec app php artisan db:seed
+```
+
+### Variáveis de ambiente
+
+```env
+APP_NAME=Rotafy
+APP_ENV=local
+APP_URL=http://localhost:8000
+
+DB_CONNECTION=pgsql
+DB_HOST=postgres
+DB_PORT=5432
+DB_DATABASE=rotafy
+DB_USERNAME=postgres
+DB_PASSWORD=secret
+
+# AbacatePay
+ABACATEPAY_API_KEY=your_api_key_here
+ABACATEPAY_BASE_URL=https://api.abacatepay.com/v1
+
+# Google Maps
+GOOGLE_MAPS_API_KEY=your_api_key_here
+
+# Google Cloud Storage
+GCS_BUCKET=rotafy-documents
+GCS_PROJECT_ID=your_project_id
+```
+
+---
+
+## 📡 Endpoints
+
+### Autenticação
+
+```
+POST   /api/auth/register         Cadastro de usuário
+POST   /api/auth/login            Login
+POST   /api/auth/logout           Logout (requer token)
+GET    /api/auth/me               Dados do usuário autenticado
+```
+
+### Perfil de motorista
+
+```
+POST   /api/driver/profile        Criar perfil de motorista
+POST   /api/driver/documents      Upload de documentos (CNH, CRLV)
+GET    /api/driver/profile        Visualizar perfil
+PATCH  /api/driver/profile        Atualizar perfil
+```
+
+### Caronas *(em desenvolvimento)*
+
+```
+GET    /api/rides                 Listar caronas disponíveis
+POST   /api/rides                 Criar carona (motorista)
+GET    /api/rides/{id}            Detalhes de uma carona
+DELETE /api/rides/{id}            Cancelar carona
+```
+
+### Solicitações *(em desenvolvimento)*
+
+```
+POST   /api/rides/{id}/requests   Solicitar carona
+PATCH  /api/requests/{id}         Aceitar ou recusar solicitação
+GET    /api/requests              Listar solicitações do usuário
+```
+
+### Pagamentos *(em desenvolvimento)*
+
+```
+POST   /api/payments/{requestId}  Iniciar pagamento PIX
+GET    /api/payments/{id}         Status do pagamento
+POST   /api/withdrawals           Solicitar saque (motorista)
+```
+
+### Avaliações *(em desenvolvimento)*
+
+```
+POST   /api/ratings               Avaliar carona
+GET    /api/users/{id}/ratings    Ver avaliações de um usuário
+```
+
+---
+
+## 🔐 Autenticação
+
+A API usa **Laravel Sanctum** com tokens de acesso pessoal. Todas as rotas protegidas requerem o header:
+
+```
+Authorization: Bearer {seu_token}
+```
+
+### Tipos de usuário
+
+| user_type | Acesso |
+|---|---|
+| `passenger` | Buscar e solicitar caronas |
+| `driver` | Oferecer caronas (requer perfil aprovado) |
+| `both` | Acesso completo |
+
+### Status de verificação
+
+| status | Descrição |
+|---|---|
+| `pending` | Aguardando verificação |
+| `verified` | Aprovado — acesso completo |
+| `rejected` | Documentação reprovada |
+
+---
+
+## 🧪 Testes
+
+```bash
+# Rodar todos os testes
+docker compose exec app php artisan test
+
+# Com cobertura
+docker compose exec app php artisan test --coverage
+```
+
+---
+
+## 📦 Infraestrutura de Produção (GCP)
+
+| Serviço | Uso | Custo estimado |
+|---|---|---|
+| Cloud Run | API Laravel (PHP) | ~R$ 5–15/mês |
+| Cloud SQL | PostgreSQL db-f1-micro | ~R$ 50/mês |
+| Cloud Storage | Documentos e fotos | < R$ 1/mês |
+| Maps API | Distance Matrix | Gratuito (crédito $200) |
+| AbacatePay | PIX por transação | R$ 0,80/tx |
+
+> O maior custo fixo é o Cloud SQL (~R$50/mês). Cloud Run escala para zero quando não há tráfego, tornando o custo variável mínimo em estágios iniciais.
+
+---
+
+## 👤 Autor
+
+**Julia Martins**
+TCC — Sistemas de Informação
+GitHub: [@juu-marrtins](https://github.com/juu-marrtins)
+
+---
+
+## 📄 Licença
+
+Este projeto é desenvolvido para fins acadêmicos (TCC).
+
+---
+
+<div align="center">
+  <sub>Feito com ☕ e Laravel · Rotafy © 2025</sub>
+</div>
