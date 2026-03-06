@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vehicles', function (Blueprint $table) {
-            $table->id();
-            $table->string('plate', 8);
-            $table->string('model');    
-            $table->string('version')
+        Schema::table('driver_documents', function (Blueprint $table) {
+            $table->string('cnh_digit')
+                ->unique()
                 ->nullable();
-            $table->string('year', 4);
-            $table->boolean('fetched_from_api');
-            $table->timestamps();
         });
     }
 
@@ -28,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vehicles');
+        Schema::table('driver_documents', function (Blueprint $table) {
+            $table->dropColumn('cnh_digit');
+        });
     }
 };

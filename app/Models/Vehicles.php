@@ -8,28 +8,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Vehicles extends Model
 {
     protected $fillable = [
-        'driver_profile_id',
+        'driver_id',
         'plate',
-        'brand',
         'model',
         'version',
         'year',
-        'fuel_type',
-        'consumption_city',
-        'consumption_road',
-        'consumption_mixed',
         'fetched_from_api',
+        'crlv_url',
+        'color',
+        'situation',
+        'fuel_type'
     ];
 
     public function casts(): array {
         return [
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
-            'year' => 'date'
         ];
     }
 
-    public function driverProfile(): BelongsTo {
-        return $this->belongsTo(DriverProfile::class);
+    public function owner(): BelongsTo {
+        return $this->belongsTo(User::class, 'driver_id');
     }
 }

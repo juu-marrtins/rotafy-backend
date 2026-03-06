@@ -13,13 +13,12 @@ return new class extends Migration
     {
         Schema::create('driver_documents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('driver_profile_id')
-                ->constrained();
             $table->string('file_path');
             $table->enum('status', ['pending', 'verified', 'rejected']);
             $table->string('reject_reason')
                 ->nullable();
-            $table->timestamp('reviwed_at');
+            $table->timestamp('reviewed_at')
+                ->nullable();
             $table->timestamps();
         });
     }

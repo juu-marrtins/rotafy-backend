@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
+use App\Exceptions\BadGatewayException;
 use App\Models\User;
 use Cloudinary\Api\Upload\UploadApi;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
 class CloudinaryService
 {
-    public function upload(?UploadedFile $photo): ?array
+    public function upload(?UploadedFile $photo, string $folder): ?array
     {
         if (!$photo) {
             return [
@@ -18,15 +18,18 @@ class CloudinaryService
                 'public_id' => null,
             ];
         }
-
-        $result = (new UploadApi())->upload(
-            $photo->getRealPath(),
-            [
-                'folder' => 'rotafy/profile_photos',
-                'public_id' => (string) Str::uuid(),
-                'resource_type' => 'image',
-            ]
-        );
+        try {
+            $result = (new UploadApi())->upload(
+                $photo->getRealPath(),
+                [
+                    'folder' => $folder,
+                    'public_id' => (string) Str::uuid(),
+                    'resource_type' => 'image',
+                ]
+            );
+        } catch (\Exception $e) {
+            throw new BadGatewayException('Error uploading file to cloudinary', $e->getMessage());
+        }
 
         return [
             'url' => $result['secure_url'] ?? null,
@@ -42,12 +45,13 @@ class CloudinaryService
         ]);
     }
 
-    public function updateAvatar(User $user, UploadedFile $photo)
+    public function updateAvatar(User $user, UploadedFile $photo, string $folder)
     {
         if ($user->photo_public_id) {
             $this->delete($user->photo_public_id);
         }
-        $result = $this->upload($photo);
+
+        $result = $this->upload($photo, $folder);
 
         $user->update([
             'photo_url' => $result['url'],

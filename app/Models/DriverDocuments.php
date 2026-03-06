@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DriverDocuments extends Model
 {
     protected $fillable = [
-        'driver_profile_id',
-        'file_path',
+        'driver_id',
+        'cnh_digit',
+        'cnh_verse_url',
+        'cnh_front_url',
+        'handle_cnh_url',
         'status',
         'reject_reason',
         'reviwed_at',
@@ -23,7 +26,7 @@ class DriverDocuments extends Model
         ];
     }
 
-    public function driverProfile(): BelongsTo {
-        return $this->belongsTo(DriverProfile::class);
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DriverController;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -49,4 +50,9 @@ Route::get('/email/verify/{id}/{hash}', function (Request $request, string $id, 
 Route::prefix('v1/auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
+});
+
+
+Route::prefix('v1/driver/')->middleware('auth:sanctum')->group(function () {
+    Route::post('register', [DriverController::class, 'register']);
 });

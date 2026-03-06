@@ -35,7 +35,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:60'],
-            'email' => ['required', 'string', 'email', 'max:100', 'unique:users', new InstitutionalEmailRule],
+            'email' => ['required', 'string', 'email', 'max:100', 'unique:users'], #new InstitutionalEmailRule],
             'password' => ['required', Password::min(8)->letters()->mixedCase()->symbols()],
             'cpf'  => ['required', 'string', 'size:11', 'unique:users', new CpfRule],
             'cnpj' => ['required', 'string', 'size:14', new CnpjRule],

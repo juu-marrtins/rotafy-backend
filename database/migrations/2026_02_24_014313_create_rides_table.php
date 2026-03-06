@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('rides', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('driver_profile_id')
-                ->constrained();
             $table->string('origin_city');
             $table->string('destination_city');
             $table->decimal('origin_lat_lng', 10, 7);

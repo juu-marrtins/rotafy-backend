@@ -26,7 +26,7 @@ class AuthService
         $photoData = [];
 
         if($photo){
-            $photoData = $this->cloudinaryService->upload($photo);
+            $photoData = $this->cloudinaryService->upload($photo, 'rotafy/profile_photos');
         }
 
         try {
@@ -68,7 +68,14 @@ class AuthService
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        return Auth::user();
+        $user = Auth::user();
+
+        /** @var \App\Models\User $user */
+        if (!$user->hasVerifiedEmail()) {
+            throw new UnauthorizedException('Email not verified');
+        }
+
+        return $user;
     }
 }
 
