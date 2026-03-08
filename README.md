@@ -106,7 +106,7 @@ Authorization: Bearer {seu_token}
 ## 👤 Autor
 
 **Julia Martins**
-TCC — Sistemas de Informação
+TCC — Analise e Desenvolvimento de Software
 GitHub: [@juu-marrtins](https://github.com/juu-marrtins)
 
 ---
