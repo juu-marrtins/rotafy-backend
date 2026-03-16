@@ -23,8 +23,29 @@ class PaymentProvider
 
         $result = Http::withHeaders($headers)->post($url, $payload);
 
-        $data = json_decode($result->getBody());
+        $data = $result->json();
 
         return data_get($data, 'data.id');
+    }
+
+    public function createPix(float $amount, array $customerData, int $expiresIn, string $message) {
+        $url = 'https://api.abacatepay.com/v1/pixQrCode/create';
+
+        $payload = [
+            'amount' => $amount * 100,
+            'expiresIn' => $expiresIn,
+            'description' => $message,
+            'customer' => $customerData,
+            'metadata' => []
+        ];
+
+        $headers = [
+            'Authorization' => ' Bearer ' . env('ABACATEPAY_API_KEY'),
+            'Content-Type' => 'application/json',
+        ];
+
+        $result = Http::withHeaders($headers)->post($url, $payload);
+
+        return $result->json();
     }
 }

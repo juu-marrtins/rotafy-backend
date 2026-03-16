@@ -4,34 +4,38 @@ namespace App\Jobs;
 
 use App\Models\User;
 use App\Providers\PaymentProvider;
+use App\Services\WalletService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
 class CreateAbacateAccountJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        public User $user
+        public User $user,
     ){}
 
-    public function handle(PaymentProvider $paymentProvider) {
-        if ($this->user->abacate_id) {
+    public function handle(PaymentProvider $paymentProvider, WalletService $walletService) {
+        $user = $this->user;
+        if ($user->abacate_id) {
             return;
         }
 
         $abacateId = $paymentProvider->createAccount([
-            'name'  => $this->user->name,
-            'phone' => $this->user->phone,
-            'email' => $this->user->email,
-            'cpf'   => $this->user->cpf,
+            'name'  => $user->name,
+            'phone' => $user->phone,
+            'email' => $user->email,
+            'cpf'   => $user->cpf,
         ]);
 
-        $this->user->update([
-            'abacate_id' => $abacateId
-        ]);
+        DB::transaction(function () use ($user, $abacateId, $walletService) {
+            $user->update(['abacate_id' => $abacateId]);
+            $walletService->create($user->id);
+        });
     }
 }

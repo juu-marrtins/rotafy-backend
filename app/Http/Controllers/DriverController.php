@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ApiResponse;
 use App\Http\Requests\RegisterDriver;
 use App\Services\DriverService;
+use Illuminate\Http\JsonResponse;
 
 class DriverController extends Controller
 {
@@ -12,7 +13,7 @@ class DriverController extends Controller
         protected DriverService $driverService
     ){}
 
-    public function register(RegisterDriver $request){
+    public function register(RegisterDriver $request): JsonResponse {
         $this->driverService->register(
             $request->file('cnh_verse'), 
             $request->file('cnh_front'), 
