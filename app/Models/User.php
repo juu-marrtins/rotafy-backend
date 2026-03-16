@@ -67,14 +67,6 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Rating::class, 'rater_id');
     }
 
-    public function payer(): HasMany {
-        return $this->hasMany(Payment::class, 'payer_id');
-    }
-
-    public function receiver(): HasMany {
-        return $this->hasMany(Payment::class, 'receiver_id');
-    }
-
     public function vehicle(): HasOne {
         return $this->hasOne(Vehicles::class, 'driver_id');
     }
@@ -87,5 +79,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function hasVerifiedEmail(): bool
     {
         return $this->email_verified_at !== null;
+    }
+
+    public function wallet(): HasOne {
+        return $this->hasOne(Wallet::class);
     }
 }

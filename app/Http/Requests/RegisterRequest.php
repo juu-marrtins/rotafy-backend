@@ -41,7 +41,7 @@ class RegisterRequest extends FormRequest
             'cnpj' => ['required', 'string', 'size:14', new CnpjRule],
             'type' => ['required', new Enum(UserTypeEnum::class)],
             'title' => ['required', new Enum(UserTitleEnum::class)],
-            'phone' => ['required', 'string', 'max:11'],
+            'phone' => ['required', 'string', 'max:10'],
             'photo' => ['sometimes', 'image', 'mimes:jpg,jpeg,png,webp','max:2048'],
             'terms_accepted' => ['required', 'accepted'],
         ];
