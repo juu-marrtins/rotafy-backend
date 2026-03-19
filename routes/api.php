@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\PassengerController;
+use App\Http\Controllers\RideController;
 use App\Http\Controllers\WebhookController;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Route;
@@ -56,12 +57,18 @@ Route::prefix('v1/auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/v1/profile', [AuthController::class, 'profile']);
+});
 
 Route::prefix('v1/driver')->middleware('auth:sanctum')->group(function () {
     Route::post('/register', [DriverController::class, 'register']);
 });
 
 Route::prefix('v1/passenger')->middleware('auth:sanctum')->group(function () {
+    Route::get('/rides/history', [RideController::class, 'getPassengerHistory']);
+    Route::get('/rides/next', [RideController::class, 'getNextRide']);
+    Route::get('/rides/search', [RideController::class, 'search']);
     Route::post('/wallet/recharge', [PassengerController::class, 'recharge']);
     Route::get('/wallet/balance', [PassengerController::class, 'balance']);
 });

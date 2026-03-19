@@ -22,4 +22,18 @@ class ApiResponse
             'data' => []
         ], $statusCode);
     }
+
+    public static function paginate(string $message, array $data, array $pagination): JsonResponse {
+        return new JsonResponse([
+            'status' => 200,
+            'message' => $message,
+            'data' => $data,
+            'pagination'=> [
+                'per_page' => $pagination['perPage'],
+                'current_page' => $pagination['currentPage'],
+                'last_page' => $pagination['lastPage'],
+                'total' => $pagination['total'],
+            ]
+        ], 200);
+    }
 }

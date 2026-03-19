@@ -6,13 +6,16 @@ use App\Helpers\ApiResponse;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\LoginResource;
+use App\Http\Resources\ProfileResource;
 use App\Services\AuthService;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
     public function __construct(
-        protected AuthService $authService
+        protected AuthService $authService,
+        protected UserService $userService,
     ) {}
 
     public function register(RegisterRequest $request): JsonResponse {
@@ -36,6 +39,15 @@ class AuthController extends Controller
         return ApiResponse::success(
             'Login successful',
             new LoginResource($user),
+            200
+        );
+    }
+
+    public function profile(): JsonResponse {
+        $user = $this->userService->profile();
+        return ApiResponse::success(
+            'Profile successfully retrieved',
+            new ProfileResource($user),
             200
         );
     }
