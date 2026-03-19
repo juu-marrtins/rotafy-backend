@@ -30,16 +30,15 @@ class WalletService
         ]);
     }
 
-    public function handlePixFlow(string $payload) {
+    public function handlePixFlow(array $payload) {
         $eventType = data_get($payload, 'event');
-        $externalId = data_get($payload, 'data.external_id');
+        $externalId = data_get($payload, 'data.id');
         $transaction = $this->findByExternalId($externalId);
         $transactionType = $transaction->type;
 
         DB::transaction(function () use ($eventType, $transaction, $transactionType) {
             return match ($transactionType) {
                 WalletTransactionTypeEnum::RECHARGE->value => $this->handleCreditOrRecharge($eventType, $transaction),
-                WalletTransactionTypeEnum::WITHDRAWAL->value => $this->handleWithdrawal($eventType, $transaction),
                 WalletTransactionTypeEnum::DEBIT->value => $this->handleDebit($eventType, $transaction),
                 WalletTransactionTypeEnum::CREDIT->value => $this->handleCreditOrRecharge($eventType, $transaction),
             };
@@ -54,7 +53,7 @@ class WalletService
     private function handleCreditOrRecharge(string $type, WalletTransaction $transaction) {
         if ($type === WebhookTriggerEnum::BILLING_PAID->value) {
             $this->walletRepository->updateTransaction([
-                'status' => WebhookStatusEnum::PIX_PAID->value, 
+                'status' => WebhookStatusEnum::COMPLETED->value,
             ], $transaction->id);
 
             $this->walletRepository->incrementBalanceWallet(
@@ -64,33 +63,33 @@ class WalletService
 
         } else {
             $this->walletRepository->updateTransaction([
-                'status' => WebhookStatusEnum::PIX_DISPUTED->value,
+                'status' => WebhookStatusEnum::FAILED->value,
             ], $transaction->id);
         }
     }
 
-    private function handleWithdrawal(string $type, WalletTransaction $transaction) {
-        if ($type === WebhookTriggerEnum::WITHDRAWAL_DONE->value) {
-            //fazer a transacao
-            $this->walletRepository->updateTransaction([
-                'status' => WebhookStatusEnum::WITHDRAWAL_DONE->value,
-            ], $transaction->id);
+    // private function handleWithdrawal(string $type, WalletTransaction $transaction) {
+    //     if ($type === WebhookTriggerEnum::WITHDRAWAL_DONE->value) {
+    //         //fazer a transacao
+    //         $this->walletRepository->updateTransaction([
+    //             'status' => WebhookStatusEnum::WITHDRAWAL_DONE->value,
+    //         ], $transaction->id);
 
-            $this->walletRepository->decrementBalanceWallet(
-                $transaction->wallet_id,
-                $transaction->amount
-            );
-        } else {
-            $this->walletRepository->updateTransaction([
-                'status' => WebhookStatusEnum::WITHDRAWAL_FAILED->value,
-            ], $transaction->id);
-        }
-    }
+    //         $this->walletRepository->decrementBalanceWallet(
+    //             $transaction->wallet_id,
+    //             $transaction->amount
+    //         );
+    //     } else {
+    //         $this->walletRepository->updateTransaction([
+    //             'status' => WebhookStatusEnum::WITHDRAWAL_FAILED->value,
+    //         ], $transaction->id);
+    //     }
+    // }
 
     private function handleDebit(string $type, WalletTransaction $transaction) {
         if ($type === WebhookTriggerEnum::BILLING_PAID->value) {
             $this->walletRepository->updateTransaction([
-                'status' => WebhookStatusEnum::PIX_PAID->value,
+                'status' => WebhookStatusEnum::COMPLETED->value,
             ], $transaction->id);
 
             $this->walletRepository->decrementBalanceWallet(
@@ -99,7 +98,7 @@ class WalletService
             );
         } else {
             $this->walletRepository->updateTransaction([
-                'status' => WebhookStatusEnum::PIX_DISPUTED->value,
+                'status' => WebhookStatusEnum::FAILED->value,
             ], $transaction->id);
         }
     }

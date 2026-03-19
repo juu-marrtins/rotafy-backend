@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enum\UserStatusEnum;
+use App\Helpers\AuthUtils;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Auth\Events\Verified;
@@ -10,7 +11,8 @@ use Illuminate\Auth\Events\Verified;
 class UserService
 {
     public function __construct(
-        protected UserRepository $userRepository
+        protected UserRepository $userRepository,
+        protected AuthUtils $authUtils,
     ){}
 
     public function create(array $data): User {
@@ -38,5 +40,9 @@ class UserService
         event(new Verified($user));
         
         return ['status' => 'verified'];
+    }
+
+    public function profile(): User {
+        return $this->authUtils->user();
     }
 }

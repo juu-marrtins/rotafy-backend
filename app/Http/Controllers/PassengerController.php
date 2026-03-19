@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
-use App\Http\Requests\RechargeWalletRequest;
+use App\Http\Requests\Passenger\RechargeWalletRequest;
 use App\Http\Resources\Wallet\PixTransactionResource;
 use App\Services\PassengerService;
 use Illuminate\Http\JsonResponse;

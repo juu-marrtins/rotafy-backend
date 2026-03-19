@@ -12,7 +12,7 @@ class WebhookController
     ){}
 
     public function pix(Request $request) {
-        $this->walletService->handlePixFlow($request->getContent());
+        $this->walletService->handlePixFlow(json_decode($request->getContent(), true));
         return response()->noContent();
     }
 }

@@ -29,7 +29,7 @@ class WalletRepository
     }
 
     public function findWalletTransactionByExternalId(string $externalId): mixed {
-        return WalletTransaction::select('id', 'wallet_id', 'type')
+        return WalletTransaction::select('id', 'wallet_id', 'type', 'amount')
             ->where('external_tx_id', $externalId)
             ->first();
     }
