@@ -4,7 +4,7 @@ namespace App\Enum;
 
 enum DriverDocumentsEnum: string
 {
-    case APPROVED = 'approved';
+    case VERIFIED = 'verified';
     case REJECTED = 'rejected';
     case PENDING = 'pending';
 }

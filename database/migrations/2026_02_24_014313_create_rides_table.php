@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('origin_city');
             $table->string('destination_city');
-            $table->decimal('origin_lat_lng', 10, 7);
-            $table->decimal('destination_lat_lng', 10, 7);
+            $table->string('origin_lat_lng');
+            $table->string('destination_lat_lng');
             $table->decimal('distance_km', 8, 2);
             $table->datetime('departure_at');
             $table->integer('avaliable_seats')

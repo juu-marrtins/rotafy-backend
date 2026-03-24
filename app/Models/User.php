@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enum\DriverDocumentsEnum;
+use App\Exceptions\ForbiddenException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -52,7 +54,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function driverDocuments(): HasOne {
-        return $this->hasOne(DriverDocuments::class);
+        return $this->hasOne(DriverDocuments::class, 'driver_id');
     }
 
     public function rideRequests(): HasMany {
@@ -83,5 +85,12 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function wallet(): HasOne {
         return $this->hasOne(Wallet::class);
+    }
+
+    public function ensureDocumentIsApproved(): void {
+    if ($this->driverDocuments?->status !== DriverDocumentsEnum::VERIFIED->value) {
+
+        throw new ForbiddenException('Documentations not approved');
+        }
     }
 }
