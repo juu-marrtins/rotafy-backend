@@ -61,11 +61,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/v1/profile', [AuthController::class, 'profile']);
 });
 
-Route::prefix('v1/driver')->middleware('auth:sanctum')->group(function () {
+Route::prefix('/v1/driver')->middleware('auth:sanctum')->group(function () {
+    Route::post('/ride/create', [RideController::class, 'create']);
     Route::post('/register', [DriverController::class, 'register']);
 });
 
-Route::prefix('v1/passenger')->middleware('auth:sanctum')->group(function () {
+Route::prefix('/v1/passenger')->middleware('auth:sanctum')->group(function () {
     Route::get('/rides/history', [RideController::class, 'getPassengerHistory']);
     Route::get('/rides/next', [RideController::class, 'getNextRide']);
     Route::get('/rides/search', [RideController::class, 'search']);

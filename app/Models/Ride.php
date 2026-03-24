@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Ride extends Model
 {
     protected $fillable = [
-        'driver_profile_id',
         'origin_city',
         'destination_city',
         'origin_lat_lng',
@@ -19,6 +18,8 @@ class Ride extends Model
         'status',
         'fuel_price_used',
         'notes',
+        'driver_id',
+        'total_cost',
     ];
 
     public function casts(): array {
@@ -29,7 +30,7 @@ class Ride extends Model
         ];
     }
 
-    public function driverProfile(): BelongsTo {
-        return $this->belongsTo(DriverProfile::class);
+    public function driver(): BelongsTo {
+        return $this->belongsTo(User::class, 'driver_id');
     }
 }
