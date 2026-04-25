@@ -4,12 +4,14 @@ namespace App\Services;
 
 use App\Enum\ApportionmentPercentageEnum;
 use App\Enum\FuelTypeEnum;
+use App\Exceptions\NotFoundException;
 use App\Filters\SearchRidesFilter;
 use App\Helpers\AuthUtils;
 use App\Http\Resources\Passenger\PassengerHistoryResource;
 use App\Models\Ride;
 use App\Providers\MapBoxProvider;
 use App\Repositories\RideRepository;
+use Illuminate\Support\Facades\DB;
 
 class RideService
 {
@@ -47,10 +49,12 @@ class RideService
         ];
     }
 
-    public function getNextRide():mixed {
+    public function getNextRide(): mixed {
         $passengerId = $this->authUtils->user()->id;
 
-        return $this->rideRepository->nextRide($passengerId)->get() ?? []; 
+        $ride = $this->rideRepository->nextRide($passengerId);
+
+        return $ride ?? [];
     }
 
     public function getPassengerHistory(array $queryParams):mixed {
@@ -59,7 +63,7 @@ class RideService
         $paginated = $history->paginate($queryParams['per_page']);
 
         return [
-            'items' => new PassengerHistoryResource($paginated->items()),
+            'items' => PassengerHistoryResource::collection($paginated->getCollection()),
             'pagination' => [
                 'perPage' => $paginated->perPage(),
                 'currentPage' => $paginated->currentPage(),
@@ -133,6 +137,56 @@ class RideService
         $valueBase  = $sharedCost / $seats;
 
         return round($valueBase * 1.10, 2);
+    }
+
+    public function getRideDetails(int $id) {
+        $ride = $this->rideRepository->getRideDetails($id)  
+            ?? throw new NotFoundException('Ride not found');
+
+        $confirmedCount = $ride->rideRequests()
+            ->where('status', 'accepted')
+            ->count();
+        $price = $this->getPricePerPassenger(
+            $ride->total_cost,
+            $confirmedCount + 1
+        );
+
+        $ride->cost_per_passenger = $price;
+
+        return $ride;
+    }
+
+    public function request(array $data) {
+        $passenger = $this->authUtils->user();
+        $ride = $this->rideRepository->findById($data['ride_id'])  
+            ?? throw new NotFoundException('Ride not found');
+
+        $confirmedCount = $ride->rideRequests()
+            ->where('status', 'accepted')
+            ->count();
+
+        $price = $this->getPricePerPassenger(
+            $ride->total_cost,
+            $confirmedCount + 1
+        );
+
+        DB::transaction(function () use ($ride, $passenger, $price, $data) {
+            $rideRequest = $this->rideRepository->request([
+                'ride_id' => $ride->id,
+                'passenger_id' => $passenger->id,
+                'status' => 'pending',
+                'calculated_price' => $price,
+                'plataform_fee' => $price * 0.10,
+                'pickup_lat_lng' => $data['pickup_lat'].','.$data['pickup_lng'],
+                'message' => data_get($data, 'message', null),
+            ]);
+
+            $ride->update([
+                'avaliable_seats' => $ride->avaliable_seats - 1,
+            ]);
+
+            return $rideRequest;
+        });
     }
 }
 
