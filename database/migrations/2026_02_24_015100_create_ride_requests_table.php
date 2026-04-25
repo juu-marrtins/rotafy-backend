@@ -15,12 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('passenger_id')
                 ->constrained('users');
-            $table->foreignId('driver_id')
-                ->constrained('users');
             $table->enum('status', ['pending', 'accepted', 'rejected', 'cancelled']);
             $table->decimal('calculated_price', 8, 2);
             $table->decimal('plataform_fee', 8, 2);
-            $table->string('pickup_address');
+            $table->string('pickup_lat_lng');
             $table->text('message')
                 ->nullable();
             $table->timestamp('responded_at')

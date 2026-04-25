@@ -22,7 +22,7 @@ class PassengerService
         $user = $this->authUtils->user();
         $wallet = $this->walletRepository->getPassengerWallet($user->id);
 
-        return number_format($wallet->balance, 2, '.', '');
+        return number_format($wallet?->balance ?? 0, 2, '.', '');
     }
 
     public function recharge(array $data) {

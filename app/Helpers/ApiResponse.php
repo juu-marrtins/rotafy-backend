@@ -23,7 +23,7 @@ class ApiResponse
         ], $statusCode);
     }
 
-    public static function paginate(string $message, array $data, array $pagination): JsonResponse {
+    public static function paginate(string $message, mixed $data, array $pagination): JsonResponse {
         return new JsonResponse([
             'status' => 200,
             'message' => $message,

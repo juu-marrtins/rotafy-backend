@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Http\Requests\Driver\CreateRideRequest;
 use App\Http\Requests\Passenger\PassengerHistoryRequest;
 use App\Http\Requests\Passenger\SearchRidesRequest;
+use App\Http\Requests\RequestRideRequest;
 use App\Services\RideService;
 use Illuminate\Http\JsonResponse;
 
@@ -24,7 +25,7 @@ class RideController extends Controller
         );
     }
 
-    public function getNextRide(): JsonResponse {
+    public function nextRide(): JsonResponse {
         $previous = $this->rideService->getNextRide();
         return ApiResponse::success(
             'Successfully get next ride', 
@@ -33,7 +34,7 @@ class RideController extends Controller
         );
     }
 
-    public function getPassengerHistory(PassengerHistoryRequest $request): JsonResponse {
+    public function passengerHistory(PassengerHistoryRequest $request): JsonResponse {
         $history = $this->rideService->getPassengerHistory($request->validated());
         return ApiResponse::paginate(
             'Successfully get passenger history', 
@@ -46,6 +47,24 @@ class RideController extends Controller
         $ride = $this->rideService->create($request->validated());
         return ApiResponse::success(
             'Successfully create ride',
+            $ride,
+            200
+        );
+    }
+
+    public function rideDetails(int $id): JsonResponse {
+        $ride = $this->rideService->getRideDetails($id);
+        return ApiResponse::success(
+            'Successfully get ride details',
+            $ride,
+            200
+        );
+    }
+
+    public function request(RequestRideRequest $request): JsonResponse {
+        $ride = $this->rideService->request($request->validated());
+        return ApiResponse::success(
+            'Successfully request ride',
             $ride,
             200
         );

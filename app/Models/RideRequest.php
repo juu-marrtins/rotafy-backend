@@ -15,7 +15,7 @@ class RideRequest extends Model
         'status',
         'calculated_price',
         'plataform_fee',
-        'pickup_address',
+        'pickup_lat_lng',
         'message',
         'responded_at',
     ];
@@ -38,9 +38,5 @@ class RideRequest extends Model
 
     public function ratings(): HasMany {
         return $this->hasMany(Rating::class);
-    }
-
-    public function payments(): HasOne {
-        return $this->hasOne(Payment::class);
     }
 }

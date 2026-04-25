@@ -67,10 +67,12 @@ Route::prefix('/v1/driver')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('/v1/passenger')->middleware('auth:sanctum')->group(function () {
-    Route::get('/rides/history', [RideController::class, 'getPassengerHistory']);
-    Route::get('/rides/next', [RideController::class, 'getNextRide']);
+    Route::get('/rides/history', [RideController::class, 'passengerHistory']);
+    Route::get('/rides/next', [RideController::class, 'nextRide']);
     Route::get('/rides/search', [RideController::class, 'search']);
+    Route::get('/rides/{id}', [RideController::class, 'rideDetails']);
+
+    Route::post('/rides/request', [RideController::class, 'request']);
     Route::post('/wallet/recharge', [PassengerController::class, 'recharge']);
     Route::get('/wallet/balance', [PassengerController::class, 'balance']);
 });
-
