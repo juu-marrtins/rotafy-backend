@@ -97,6 +97,7 @@ class RideService
             'destination_lat_lng'=> $data['destination_lat'].','.$data['destination_lng'],
             'departure_at'      => $data['departure_at'],
             'avaliable_seats'   => $data['available_seats'],
+            'original_seats'    => $data['available_seats'],
             'status'            => 'open',
             'distance_km'       => $distanceKm,
             'fuel_price_used'   => $fuel->price(), 
@@ -161,13 +162,9 @@ class RideService
         $ride = $this->rideRepository->findById($data['ride_id'])  
             ?? throw new NotFoundException('Ride not found');
 
-        $confirmedCount = $ride->rideRequests()
-            ->where('status', 'accepted')
-            ->count();
-
         $price = $this->getPricePerPassenger(
             $ride->total_cost,
-            $confirmedCount + 1
+            $ride->original_seats
         );
 
         DB::transaction(function () use ($ride, $passenger, $price, $data) {

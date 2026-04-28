@@ -21,6 +21,7 @@ class Ride extends Model
         'notes',
         'driver_id',
         'total_cost',
+        'original_seats'
     ];
 
     public function casts(): array {
