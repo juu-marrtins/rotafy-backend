@@ -97,7 +97,8 @@ class RideRepository
                 'rides.avaliable_seats',
                 'rides.driver_id',
                 'rides.total_cost',
-                'rides.status'
+                'rides.status',
+                'rides.distance_km'
             )
             ->where('id', $id)
             ->with([
